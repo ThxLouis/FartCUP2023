@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FART CUP 2023</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #66ff00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 300px;
+      padding: 20px;
+      background-color: #1c1c1c;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      font-size: 24px;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+      font-weight: bold;
+      color: #fff;
+    }
+    th {
+      background-color: #444;
+    }
+    tr:nth-child(odd) {
+      background-color: #1c1c1c;
+    }
+    tr:nth-child(even) {
+      background-color: #292929;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>FART CUP 2023</h1>
+    <table>
+      <thead>
+        <tr>
+        </tr>
+      </thead>
+      <tbody id="classement-rows">
+        <!-- Les joueurs seront ajoutés ici -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Fonction pour charger les données du classement depuis le stockage local
+    function loadClassementData() {
+      const savedPlayers = JSON.parse(localStorage.getItem('players')) || [];
+
+      function createClassementElement(player) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${player.name}</td>
+          <td>${player.points}</td>
+        `;
+        return tr;
+      }
+
+      const classementTable = document.getElementById('classement-rows');
+
+      // Effacer le contenu existant du tableau
+      classementTable.innerHTML = '';
+
+      // Tri des joueurs par score décroissant
+      savedPlayers.sort((a, b) => b.points - a.points);
+
+      savedPlayers.forEach((player, index) => {
+        const classementRow = createClassementElement(player);
+        // Calculer la teinte de fond en fonction de la place dans le classement
+        const shade = (index / savedPlayers.length) * 50 + 30;
+        classementRow.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
+        classementTable.appendChild(classementRow);
+      });
+    }
+
+    // Actualiser le classement toutes les 10 secondes
+    setInterval(loadClassementData, 10000);
+
+    // Charger les données du classement au chargement de la page
+    loadClassementData();
+  </script>
+</body>
+</html>

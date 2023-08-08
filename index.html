@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Classement de Joueurs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Classement de Joueurs</h1>
+    <ul id="player-list">
+      <!-- Les joueurs seront ajoutés ici -->
+    </ul>
+    <button id="add-player">Ajouter un Joueur</button>
+    <button id="save-button">Sauvegarder</button>
+  </div>
+
+  <script>
+    const playerList = document.getElementById('player-list');
+    const addPlayerButton = document.getElementById('add-player');
+    const saveButton = document.getElementById('save-button');
+
+    // Charger les données des joueurs depuis le stockage local
+    const savedPlayers = JSON.parse(localStorage.getItem('players')) || [];
+
+    function createPlayerElement(player) {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <input class="player-name" value="${player.name}" />
+        <button class="remove-player">Supprimer</button>
+        <button class="add-point">+</button>
+        <span class="points">${player.points}</span>
+        <button class="remove-point">-</button>
+      `;
+      playerList.appendChild(li);
+
+      const playerNameInput = li.querySelector('.player-name');
+      const removePlayerButton = li.querySelector('.remove-player');
+      const addPointButton = li.querySelector('.add-point');
+      const removePointButton = li.querySelector('.remove-point');
+      const pointsDisplay = li.querySelector('.points');
+
+      playerNameInput.addEventListener('change', () => {
+        player.name = playerNameInput.value;
+        savePlayersToLocalStorage();
+        updateClassementData();
+      });
+
+      removePlayerButton.addEventListener('click', () => {
+        playerList.removeChild(li);
+        savedPlayers.splice(savedPlayers.indexOf(player), 1);
+        savePlayersToLocalStorage();
+        updateClassementData();
+      });
+
+      addPointButton.addEventListener('click', () => {
+        player.points++;
+        pointsDisplay.textContent = player.points;
+        savePlayersToLocalStorage();
+        updateClassementData();
+      });
+
+      removePointButton.addEventListener('click', () => {
+        if (player.points > 0) {
+          player.points--;
+          pointsDisplay.textContent = player.points;
+          savePlayersToLocalStorage();
+          updateClassementData();
+        }
+      });
+    }
+
+    function savePlayersToLocalStorage() {
+      localStorage.setItem('players', JSON.stringify(savedPlayers));
+    }
+
+    function updateClassementData() {
+      // Ne faites rien ici, cette fonction est définie sur la page classement.html
+    }
+
+    savedPlayers.forEach((player) => {
+      createPlayerElement(player);
+    });
+
+    addPlayerButton.addEventListener('click', () => {
+      const newPlayer = {
+        name: 'Nouveau Joueur',
+        points: 0,
+      };
+      savedPlayers.push(newPlayer);
+      createPlayerElement(newPlayer);
+      savePlayersToLocalStorage();
+      updateClassementData();
+    });
+
+    saveButton.addEventListener('click', () => {
+      savePlayersToLocalStorage();
+      updateClassementData();
+    });
+  </script>
+</body>
+</html>
